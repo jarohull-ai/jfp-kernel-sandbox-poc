@@ -38,7 +38,8 @@ def parse_policy(policy_path):
     return roots, allow_network_fetch
 
 def run_agent(sandbox_enabled, target_script):
-    policy_path = "/home/jaro/dev/jfp-sandbox-poc/jfp-policy.toml"
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    policy_path = os.path.join(BASE_DIR, "jfp-policy.toml")
     
     roots, allow_network_fetch = parse_policy(policy_path)
     
@@ -73,7 +74,8 @@ def run_agent(sandbox_enabled, target_script):
             
         # Add writable binds for roots from JFP policy
         for root in roots:
-            path = root["path"]
+            # Replace hardcoded home path with local BASE_DIR for portability
+            path = root["path"].replace("/home/jaro/dev/jfp-sandbox-poc", BASE_DIR)
             if root["access"] == "read-write":
                 os.makedirs(path, exist_ok=True)
                 cmd.extend(["--bind", path, path])
@@ -93,7 +95,8 @@ def run_agent(sandbox_enabled, target_script):
 
 if __name__ == "__main__":
     sandbox = True
-    target = "/home/jaro/dev/jfp-sandbox-poc/mock_agent.py"
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    target = os.path.join(BASE_DIR, "mock_agent.py")
     
     # Simple command line parsing
     args = sys.argv[1:]

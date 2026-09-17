@@ -10,13 +10,14 @@ def jfp_log(field, value):
     print(f"F:{field}:{value};", flush=True)
 
 def main():
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
     jfp_log("JFP_FACT_ID", "fact_poc_agent_run_01")
     jfp_log("AGENT_ID", "jfp_poc_agent_v1")
     jfp_log("TARGET_CLASS", "POC_SANDBOX_VALIDATION")
     jfp_log("STATUS", "IN_PROGRESS")
     
     # 1. Performing authorized write in the designated workspace
-    workspace_file = "/home/jaro/dev/jfp-sandbox-poc/workspace/task_result.txt"
+    workspace_file = os.path.join(BASE_DIR, "workspace/task_result.txt")
     jfp_log("ACTION", f"Attempting authorized write to: {workspace_file}")
     
     try:
@@ -32,7 +33,7 @@ def main():
         sys.exit(1)
 
     # 2. Attempting unauthorized write outside the workspace (Escape attempt)
-    escape_file = "/home/jaro/dev/jfp-sandbox-poc/escape_compromised.txt"
+    escape_file = os.path.join(BASE_DIR, "escape_compromised.txt")
     jfp_log("ACTION", f"Attempting UNAUTHORIZED write to escape sandbox: {escape_file}")
     
     try:

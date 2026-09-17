@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-POC_DIR="/home/jaro/dev/jfp-sandbox-poc"
+POC_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ESCAPE_FILE="${POC_DIR}/escape_compromised.txt"
 WORKSPACE_FILE="${POC_DIR}/workspace/task_result.txt"
 
