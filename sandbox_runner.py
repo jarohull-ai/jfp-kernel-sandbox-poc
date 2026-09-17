@@ -69,7 +69,8 @@ def run_agent(sandbox_enabled, target_script):
         ]
         
         # Enforce network isolation based on JFP policy
-        # Note: We skip --unshare-net in GitHub Actions environments to avoid loopback RTM_NEWADDR failures in virtualized containers.
+        # CI mode: GitHub Actions containers do not allow --unshare-net (RTM_NEWADDR fails on loopback).
+        # Local mode: full network isolation is enforced. See README "Two Modes: CI vs Local".
         if not allow_network_fetch and os.environ.get("GITHUB_ACTIONS") != "true":
             cmd.append("--unshare-net") # Completely block internet access
             

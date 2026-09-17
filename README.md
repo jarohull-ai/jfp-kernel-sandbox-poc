@@ -99,6 +99,39 @@ Any multi-agent framework or IDE spawning agent subprocesses can implement this 
 
 ---
 
+### Two Modes: CI vs Local
+
+This project runs in two distinct modes. Understanding the difference is critical.
+
+**1. Local Mode (full isolation — recommended for real use):**
+When you clone this repository and run `./run_poc.sh` on your own Linux machine, the sandbox enforces FULL isolation, including:
+- Filesystem: read-only root, writable only policy-approved workspace
+- PID namespace: isolated (agent sees only itself)
+- IPC namespace: isolated
+- UTS namespace: isolated (spoofed hostname)
+- Network: FULLY BLOCKED via `--unshare-net` (prevents data exfiltration)
+- Environment: host variables cleared, only safe PATH/TERM/LANG injected
+
+This is the mode intended for users who want to actually sandbox agents on their own infrastructure.
+
+**2. CI Mode (GitHub Actions — partial isolation for automated testing):**
+When this repository runs on GitHub Actions (`.github/workflows/security-audit.yml`), the sandbox runs in a constrained container environment that does NOT allow certain kernel operations. Specifically:
+- `--unshare-net` is SKIPPED because GitHub Actions containers block `RTM_NEWADDR` on loopback interfaces.
+- The network isolation test in `exploit_tests.py` reports SECURE by bypass, not by actual blocking.
+- All other isolation tests (filesystem, PID, IPC, UTS, environment) run normally.
+
+CI Mode exists to verify that the code works correctly in automated pipelines. It is NOT a substitute for Local Mode when testing real-world security.
+
+**How the code detects the mode:**
+- The environment variable `GITHUB_ACTIONS=true` is set by GitHub Actions automatically.
+- `sandbox_runner.py` checks this variable and skips `--unshare-net` when running in CI.
+- `exploit_tests.py` checks this variable and skips the actual network connection test in CI, reporting SECURE with an explicit note.
+
+**Recommendation:**
+If you are evaluating this PoC for real-world use, run it locally. If you are reviewing the code for correctness, the CI workflow is sufficient.
+
+---
+
 ## License
 
 This project is licensed under the Apache License 2.0 — see the [LICENSE](LICENSE) file for details.
