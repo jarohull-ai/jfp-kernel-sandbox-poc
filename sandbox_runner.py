@@ -73,6 +73,10 @@ def run_agent(sandbox_enabled, target_script):
         if not allow_network_fetch and os.environ.get("GITHUB_ACTIONS") != "true":
             cmd.append("--unshare-net") # Completely block internet access
             
+        # Preserve GITHUB_ACTIONS env var if running in CI to let tests handle platform constraints
+        if os.environ.get("GITHUB_ACTIONS") == "true":
+            cmd.extend(["--setenv", "GITHUB_ACTIONS", "true"])
+            
         # Add writable binds for roots from JFP policy
         for root in roots:
             # Replace hardcoded home path with local BASE_DIR for portability
