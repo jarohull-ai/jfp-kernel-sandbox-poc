@@ -25,6 +25,8 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y bubblewrap
+          # Enable unprivileged user namespaces on Ubuntu 24.04 (Noble Numbat)
+          sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0 || true
 
       - name: Verify Bubblewrap Installation
         run: bwrap --version
