@@ -1,0 +1,6 @@
+# Transient files from runs
+workspace/
+escape_compromised.txt
+__pycache__/
+*.pyc
+*.pyo

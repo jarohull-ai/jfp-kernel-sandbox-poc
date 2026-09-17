@@ -1,0 +1,8 @@
+schema = "viper-aos.permission-policy.v1"
+
+[[roots]]
+path = "/home/jaro/dev/jfp-sandbox-poc/workspace"
+access = "read-write"
+
+allow_network_fetch = false
+allow_execute = true
