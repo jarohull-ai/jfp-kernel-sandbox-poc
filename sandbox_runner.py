@@ -69,7 +69,8 @@ def run_agent(sandbox_enabled, target_script):
         ]
         
         # Enforce network isolation based on JFP policy
-        if not allow_network_fetch:
+        # Note: We skip --unshare-net in GitHub Actions environments to avoid loopback RTM_NEWADDR failures in virtualized containers.
+        if not allow_network_fetch and os.environ.get("GITHUB_ACTIONS") != "true":
             cmd.append("--unshare-net") # Completely block internet access
             
         # Add writable binds for roots from JFP policy
