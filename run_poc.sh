@@ -62,6 +62,10 @@ echo "We will run exploit_tests.py inside the sandbox to search for leaks in net
 echo ""
 python3 "${POC_DIR}/sandbox_runner.py" "${POC_DIR}/exploit_tests.py"
 
+# Clean up temporary test files at the end of execution
+rm -f "$ESCAPE_FILE"
+rm -f "$WORKSPACE_FILE"
+
 echo "=========================================================================="
 echo " PoC COMPLETED SUCCESSFULLY: JFP deterministic tracing and kernel-level "
 echo " bubblewrap sandboxing fully verified and audited! "

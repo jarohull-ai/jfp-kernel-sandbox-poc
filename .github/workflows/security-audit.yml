@@ -1,0 +1,56 @@
+name: "JFP Kernel Sandbox Security Audit"
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  security-audit:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Bubblewrap
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y bubblewrap
+
+      - name: Verify Bubblewrap Installation
+        run: bwrap --version
+
+      - name: Make Scripts Executable
+        run: chmod +x run_poc.sh mock_agent.py sandbox_runner.py exploit_tests.py
+
+      - name: Run Proof of Concept (PoC) Tests
+        run: bash run_poc.sh
+
+      - name: Verify Sandbox Security (No Escape Files)
+        run: |
+          if [ -f "escape_compromised.txt" ]; then
+            echo "ERROR: escape_compromised.txt exists! Sandbox boundary was breached!"
+            exit 1
+          else
+            echo "SUCCESS: Sandbox filesystem boundary is secure."
+          fi
+
+      - name: Run Adversarial Security Audit & Verify Success
+        run: |
+          python3 sandbox_runner.py exploit_tests.py > audit_output.log
+          cat audit_output.log
+          if grep -q "ALL_SECURITY_TESTS_PASSED_SECURE" audit_output.log; then
+            echo "SUCCESS: All security namespaces and environment protections verified successfully!"
+          else
+            echo "ERROR: Adversarial audit failed! Security holes detected."
+            exit 1
+          fi
