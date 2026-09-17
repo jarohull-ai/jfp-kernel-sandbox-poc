@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+# Copyright 2026 Jaroslaw Kuchta (jarohull-ai)
+# Licensed under the Apache License, Version 2.0
+# See LICENSE file in the project root for full license information.
+
 import sys
 import os
 import subprocess
